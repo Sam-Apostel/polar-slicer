@@ -1,0 +1,100 @@
+.GcodeEditor {
+	height: 100%;
+	overflow-y: scroll;
+	padding: 1rem;
+	background: lch(9% 0 270 / 1);
+	color: lch(80% 0 0);
+	counter-reset: section;
+	font-family: monospace;
+	line-height: 1.2rem;
+}
+
+.GcodeEditor .addLine {
+	display: inline-flex;
+	gap: .5rem;
+	padding: .2rem .8rem .2rem .2rem;
+	margin-top: .1rem;
+	margin-left: calc(4ch + 1rem);
+	border-radius: .2rem;
+	transition: .2s;
+	line-height: 1rem;
+}
+.GcodeEditor .addLine:hover {
+	background: lch(35% 50 270 / .3);
+}
+.GcodeEditor .addLine div{
+	background-color: lch(35% 50 270 / 1);
+	width: 1rem;
+	border-radius: 50%;
+	text-align: center;
+}
+
+.GcodeEditor .newLine {
+	display: flex;
+	gap: .5rem;
+	margin-left: calc(4ch + 1rem);
+	padding: .15rem 0;
+}
+
+.GcodeEditor .newLine div{
+	color: lch(30% 0 0);
+	border: 1px solid currentColor;
+	width: 1.4rem;
+	border-radius: 50%;
+	text-align: center;
+	transition: .2s;
+}
+.GcodeEditor .newLine div:hover{
+	color: lch(70% 0 0);
+}
+
+.GcodeEditor .newLine input{
+	appearance: none;
+	border: none;
+	background: lch(35% 50 270 / .3);
+	color: lch(80% 0 0);
+	font-family: monospace;
+	padding: 0 .4rem;
+	border-radius: .2rem;
+	margin: 0;
+}
+
+.GcodeLine {
+	display: flex;
+	padding: .15rem 0;
+	min-height: 1.2rem;
+	gap: 1rem;
+}
+.GcodeLine.noCode {
+	text-indent: calc(4ch + 1rem);
+	padding: 0;
+}
+.GcodeLine:not(.noCode):before {
+	counter-increment: section;
+	content: counter(section);
+	color: lch(30% 0 0);
+	text-align: right;
+	width: 4ch;
+}
+
+.Gcode {
+	display: flex;
+	gap: .6rem;
+	background-color: lch(30% 0 0);
+	padding: 0 .4rem;
+	border-radius: .2rem;
+}
+
+.Gcode-G-command {
+	background-color: lch(45% 50 30);
+}
+
+.Gcode-M-command {
+	background-color: lch(45% 50 130);
+}
+
+.GcodeLine .comment {
+	color: lch(50% 0 0);
+	white-space: pre-wrap;
+}
+

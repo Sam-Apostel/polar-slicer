@@ -1,0 +1,8 @@
+.GcodeViewer {
+	width:100%;
+	height:100%;
+}
+.GcodeViewer canvas {
+	width:100%;
+	height:100%;
+}
