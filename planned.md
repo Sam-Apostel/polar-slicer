@@ -17,6 +17,8 @@
 	- reverse kinematics
 - autozoom
 - play toolpath as animation
+- arcs
+- G0 (rapid move) follows polar coordinates and arcs where necessary
 
 # advanced toolpaths
 - 6 DOF
