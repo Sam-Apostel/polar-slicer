@@ -2,7 +2,7 @@ import './style.css';
 import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import { GCodeLoader } from 'three/examples/jsm/loaders/GCodeLoader';
+import { GCodeLoader } from './../../libraries/gCodeLoader';
 import { useMeasure } from 'react-use';
 
 const GcodeViewer = props => {
