@@ -19,6 +19,8 @@
 - play toolpath as animation
 - arcs
 - G0 (rapid move) follows polar coordinates and arcs where necessary
+- G17 G18 G19 (plane selection) applies to G2 and G3 arc moves
+- G68 ( rotate coordinate system ) usefull for G0 from center
 
 # advanced toolpaths
 - 6 DOF

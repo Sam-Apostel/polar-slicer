@@ -7,7 +7,8 @@ import { useMeasure } from 'react-use';
 
 const GcodeViewer = props => {
 	const {
-		gcode
+		gcode,
+		shell
 	} = props;
 	const [sizeRef, { width, height }] = useMeasure();
 	const canvasRef = useRef();
@@ -18,20 +19,56 @@ const GcodeViewer = props => {
 	const [object, setObject] = useState();
 
 	useEffect(() => {
-		const scene = new THREE.Scene();
 		const renderer = new THREE.WebGLRenderer();
 		renderer.setPixelRatio( window.devicePixelRatio );
 		renderer.setClearColor( 0x2c2c2c, 1);
 		setRenderer(renderer);
+
+		const scene = new THREE.Scene();
+
+		const directionalLight = new THREE.DirectionalLight( 0xffffff, 1 );
+		directionalLight.position.set( 500,500, 500 ).normalize();
+		scene.add( directionalLight );
+
+		const directionalLight2 = new THREE.DirectionalLight( 0xffffff, .3 );
+		directionalLight2.position.set( -500,0, -500 ).normalize();
+		scene.add( directionalLight2 );
+
+		const directionalLight3 = new THREE.DirectionalLight( 0xffffff, .3 );
+		directionalLight3.position.set( -500,0, 500 ).normalize();
+		scene.add( directionalLight3 );
+
+		const directionalLight4 = new THREE.DirectionalLight( 0xffffff, .2 );
+		directionalLight4.position.set( 300,-200, -500 ).normalize();
+		scene.add( directionalLight4 );
+
+		const ambientLight = new THREE.AmbientLight( 0xffffff, .3 );
+		scene.add( ambientLight );
+
+
+		scene.add();
 		setScene(scene);
 	}, []);
+
+	useEffect(() => {
+		if (!shell || !scene) return;
+
+		const material = new THREE.MeshLambertMaterial( {
+			color: new THREE.Color().setHSL( .2, .5, .6 ),
+			reflectivity: 0
+		});
+
+		const shellMesh = new THREE.Mesh( shell, material )
+		shellMesh.position.set(0, 45, 0);
+		scene.add(shellMesh);
+	}, [shell, scene]);
 
 	useEffect(() => {
 
 		if (!renderer || !scene || !camera) return;
 		const animate = function () {
 			requestAnimationFrame( animate );
-			if (camera) renderer.render( scene, camera );
+			renderer.render( scene, camera );
 		};
 		const requestID = requestAnimationFrame( animate );
 
@@ -54,7 +91,7 @@ const GcodeViewer = props => {
 
 	useEffect(() => {
 		if (!scene || !object) return;
-		object.position.set( - 100, - 20, 100 );
+		// object.position.set( - 100, - 20, 100 );
 		scene.add(object);
 	}, [object, scene]);
 
@@ -62,7 +99,12 @@ const GcodeViewer = props => {
 		if (!width || !height) return;
 		const aspectRatio = width / height;
 		if (!camera) {
-			setCamera(new THREE.PerspectiveCamera( 75, aspectRatio, 0.1, 1000 ));
+			const camera = new THREE.PerspectiveCamera( 75, aspectRatio, .1, 1000 );
+			camera.updateProjectionMatrix();
+			camera.position.set( 240, 170, 150);
+			camera.lookAt(new THREE.Vector3(0,0,0));
+			setCamera(camera);
+
 			return;
 		}
 
@@ -74,7 +116,7 @@ const GcodeViewer = props => {
 
 	useEffect(() => {
 		if (!canvasRef.current || !renderer || !camera) return;
-		canvasRef.current.appendChild( renderer.domElement );
+		if (canvasRef.current.children.length === 0) canvasRef.current.appendChild( renderer.domElement );
 		const controls = new OrbitControls(camera, canvasRef.current);
 		controls.minDistance = 10;
 		controls.maxDistance = 400;
