@@ -25,3 +25,10 @@
 # advanced toolpaths
 - 6 DOF
 - view different machine operations (temperature, feedrate, ...)
+
+# slicer
+- convert geometry into slices
+- convert slices into gcode
+- infill patterns
+- multiple walls
+- support structures
