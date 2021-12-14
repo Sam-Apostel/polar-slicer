@@ -1,5 +1,6 @@
 import './style.css';
 import { useEffect, useRef, useState } from 'react';
+import { Euler } from 'three';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { GCodeLoader } from './../../libraries/gCodeLoader';
@@ -52,14 +53,19 @@ const GcodeViewer = props => {
 
 	useEffect(() => {
 		if (!shell || !scene) return;
+		if (scene.getObjectByName('shell')) return;
 
-		const material = new THREE.MeshLambertMaterial( {
-			color: new THREE.Color().setHSL( .2, .5, .6 ),
-			reflectivity: 0
+		const material = new THREE.MeshPhongMaterial( {
+			color: new THREE.Color().setHSL( .4, .5, .6 ),
+			reflectivity: 0,
+			opacity: 0.2,
 		});
+		material.transparent = true;
 
 		const shellMesh = new THREE.Mesh( shell, material )
-		shellMesh.position.set(0, 45, 0);
+		shellMesh.position.set(0, 0, 0);
+		shellMesh.quaternion.setFromEuler( new Euler( - Math.PI / 2, 0, 0 ) )
+		shellMesh.name = 'shell';
 		scene.add(shellMesh);
 	}, [shell, scene]);
 
@@ -84,7 +90,7 @@ const GcodeViewer = props => {
 		}
 		if (!gcode || !scene) return;
 
-		scene.remove( object );
+		if (object) scene.remove( object );
 		setObject(loader.parse(gcode));
 
 	}, [gcode, loader, scene]);
