@@ -10,15 +10,6 @@ import {
 	EllipseCurve
 } from 'three';
 
-/**
- * GCodeLoader is used to load gcode files usually used for 3D printing or CNC applications.
- *
- * Gcode files are composed by commands used by machines to create objects.
- *
- * @class GCodeLoader
- * @param {Manager} manager Loading manager.
- */
-
 class GCodeLoader extends Loader {
 
 	constructor( manager ) {
@@ -124,9 +115,9 @@ class GCodeLoader extends Loader {
 				getAngle(p1, center), getAngle(p2, center),
 				direction
 			);
-			const dividions = 50;
-			curve.getPoints(dividions).map((point, index) => {
-				return { ...point, z: p1.z + (p2.z - p1.z) / dividions * index}
+			const divisions = 50;
+			curve.getPoints(divisions).map((point, index) => {
+				return { ...point, z: p1.z + (p2.z - p1.z) / divisions * index}
 			})
 				.map((point, index, points) => {
 					return {
@@ -160,15 +151,13 @@ class GCodeLoader extends Loader {
 			const tokens = lines[ i ].split( ' ' );
 			const cmd = tokens[ 0 ].toUpperCase();
 
-			//Argumments
 			const args = {};
 			tokens.splice( 1 ).forEach( function ( token ) {
 
 				if ( token[ 0 ] !== undefined ) {
 
 					const key = token[ 0 ].toLowerCase();
-					const value = parseFloat( token.substring( 1 ) );
-					args[ key ] = value;
+					args[ key ] = parseFloat(token.substring(1));
 
 				}
 
@@ -190,7 +179,7 @@ class GCodeLoader extends Loader {
 
 					state.extruding = delta( state.e, line.e ) > 0;
 
-					if ( currentLayer == undefined || line.z != currentLayer.z ) {
+					if ( currentLayer === undefined || line.z !== currentLayer.z ) {
 
 						newLayer( line );
 
@@ -210,7 +199,7 @@ class GCodeLoader extends Loader {
 				if (p2.r === 0) p2.a = p1.a;
 
 				const divisions = 50;
-				const interpolate = (a, b, seg, prog) => a + (b - a) / seg * prog;
+				const interpolate = (a, b, segments, step) => a + (b - a) / segments * step;
 				[...Array(divisions + 1)]
 					.map((_, i) => ({
 						a: interpolate(p1.a, p2.a, divisions, i), // TODO choose the shortest direction
@@ -249,7 +238,7 @@ class GCodeLoader extends Loader {
 
 					state.extruding = delta( state.e, line.e ) > 0;
 
-					if ( currentLayer == undefined || line.z != currentLayer.z ) {
+					if ( currentLayer === undefined || line.z !== currentLayer.z ) {
 
 						newLayer( line );
 
@@ -297,7 +286,7 @@ class GCodeLoader extends Loader {
 				//Layer change detection is or made by watching Z, it's made by watching when we extrude at a new Z position
 				if ( delta( state.e, line.e ) > 0 ) {
 					state.extruding = delta( state.e, line.e ) > 0;
-					if ( currentLayer == undefined || line.z != currentLayer.z ) {
+					if ( currentLayer === undefined || line.z !== currentLayer.z ) {
 						newLayer( line );
 					}
 

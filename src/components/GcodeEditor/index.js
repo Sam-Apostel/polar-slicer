@@ -21,14 +21,7 @@ const Gcode = props => {
 	const [command, ...args] = code.split(' ');
 	const commandType = command.slice(0, 1);
 	const commandValue = command.slice(1);
-	const commands = {
-		G1: {
-			name: 'move'
-		},
-		M204: {
-			name: 'acceleration'
-		}
-	}
+
 	if (commandType === 'G') {
 		if (commandValue === '1') {
 			return (
@@ -91,14 +84,15 @@ const GcodeEditor = props => {
 	const [newLine, setNewLine] = useState(null);
 	const [lineCopy, setLineCopy] = useState(null);
 
+	const lines = gcode.split('\n');
+
 	useEffect(() => {
 		if (lineCopy > 0 && lineCopy < lines.length) setNewLine(lines[lines.length - lineCopy]);
 		if (lineCopy === 0 ) {
 			setNewLine('G1 ');
 		}
-	}, [lineCopy]);
+	}, [lineCopy, lines]);
 
-	const lines = gcode.split('\n');
 	return (
 		<div className="GcodeEditor">
 			{lines.map((line, index) =>
