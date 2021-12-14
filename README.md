@@ -26,3 +26,5 @@ ex:
 ex: 
 - extrusion `G1 X100 Y20 Z0.35 E0.6`
 - retraction `G1 X100 Y20 Z0.35 E-0.6`
+
+![Lines of code](https://img.shields.io/tokei/lines/github/Sam-Apostel/polar-slicer?label=lines%20of%20code&style=for-the-badge)
