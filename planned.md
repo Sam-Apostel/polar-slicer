@@ -7,6 +7,7 @@
 - loops
 - variables
 - functional blocks
+- select line represented in output
 
 # viewer
 - [x] display shell object
@@ -27,8 +28,16 @@
 - view different machine operations (temperature, feedrate, ...)
 
 # slicer
-- convert geometry into slices
-- convert slices into gcode
+- [x] convert geometry into slices
+- [x] convert slices into gcode
 - infill patterns
+  - dynamic infill density
 - multiple walls
+  - detect thin extrusions and space evenly / extrude thinner lines
 - support structures
+
+# settings
+- slicer settings 
+- layer height
+- infill
+- 

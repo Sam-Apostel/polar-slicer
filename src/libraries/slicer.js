@@ -2,8 +2,9 @@
  * get slices
  */
 export const getSlices = (geometry, settings) => {
-	const amountOfSlices = Math.ceil(geometry.height / settings.layerHeight);
-	const slices = [...Array(amountOfSlices)].map((_, layer) => getSlice(geometry, layer * settings.layerHeight + geometry.bounds.bottom));
+	const height = geometry.boundingBox.max.z;
+	const amountOfSlices = Math.ceil(height / settings.layerHeight);
+	const slices = [...Array(amountOfSlices)].map((_, layer) => getSlice(geometry, layer * settings.layerHeight));
 	return slices;
 }
 
@@ -17,7 +18,6 @@ const getSlice = (geometry, zHeight) => {
 	const shape = getShapeFromEdges(edges);
 	return {
 		z: zHeight,
-		edges: [...edges, edges[0]],
 		shape
 	};
 }
@@ -79,6 +79,8 @@ const vertexAtHeightOnEdge = (edge, height) => {
  * get shape from vertices
  */
 const getShapeFromEdges = edges => {
+	if (edges.length <= 1) return edges.flatMap(edge => edge);
+
 	let shape = edges[0];
 	let lastVertex = edges[0][1];
 	const usedEdges = [0];
@@ -97,13 +99,14 @@ const getShapeFromEdges = edges => {
 			}
 			return false;
 		});
+		if (!nextEdge) {
+			continue; // start a new shape
+		}
 		lastVertex = nextEdge[direction];
 		shape.push(nextEdge[direction]);
 	}
 
 	return shape;
-	// sort and rotate edges so that begin and end meet
-	// split in different loops
 
-	// return only begins to form shapes
+	// split in different loops
 }

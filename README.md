@@ -26,3 +26,10 @@ ex:
 ex: 
 - extrusion `G1 X100 Y20 Z0.35 E0.6`
 - retraction `G1 X100 Y20 Z0.35 E-0.6`
+
+## supported
+✔ THREE.js bufferGeometries (both index and not indexed) \
+✔ 1 wall thick slicing \
+
+## limitations
+- each slice needs to be 1 continuous path

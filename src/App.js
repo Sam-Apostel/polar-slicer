@@ -13,7 +13,10 @@ function App() {
 
 	useEffect(() => {
 		if (!setGeometry) return;
-		setGeometry(new IcosahedronBufferGeometry(50))
+		const geom = new IcosahedronBufferGeometry(50);
+		geom.computeBoundingBox();
+		geom.translate(0, 0, -geom.boundingBox.min.z);
+		setGeometry(geom)
 	}, [setGeometry])
 	return (
 		<div className="App">
