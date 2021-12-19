@@ -33,9 +33,13 @@
 - [x] convert slices into gcode
 - [ ] infill patterns
   - [ ] dynamic infill density
-- [x] multiple walls
+- [ ] multiple walls
   - [ ] detect thin extrusions and space evenly / extrude thinner lines
 - [ ] support structures
+- [ ] align the start and stop points of consecutive loop
+- [ ] feedrates
+- [ ] extrusion speeds
+- [ ] don't pass over the same point twice when closing a shape
 
 # settings
 - [ ] import/export settings 
