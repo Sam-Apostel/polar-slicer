@@ -81,8 +81,8 @@ const vertexAtHeightOnEdge = (edge, height) => {
 const getShapeFromEdges = edges => {
 	if (edges.length <= 1) return edges.flatMap(edge => edge);
 
-	let shape = edges[0];
 	let lastVertex = edges[0][1];
+	let shape = [lastVertex];
 	const usedEdges = [0];
 	for (let i = 0; i < edges.length - 1; i++) {
 		let direction = 1;
@@ -100,13 +100,45 @@ const getShapeFromEdges = edges => {
 			return false;
 		});
 		if (!nextEdge) {
-			continue; // start a new shape
+			continue; // TODO: start a new shape
 		}
 		lastVertex = nextEdge[direction];
 		shape.push(nextEdge[direction]);
 	}
 
+	// join edges that lie inline with another
+	shape = shape.filter((vertex, index, vertices) => {
+		const prev = vertices[(index - 1 + vertices.length) % vertices.length];
+		const next = vertices[(index + 1) % vertices.length];
+		return (distance(prev, vertex) + distance(vertex, next) !== distance(prev, next));
+	});
+
+
+
+	// TODO: check if the shape has an even or odd amount of parents, this should determine the winding direction
+	if (getWindingDirection(shape) === ANTICLOCKWISE) {
+		shape.reverse();
+	}
+	shape.push(shape[0]);
 	return shape;
 
-	// split in different loops
+}
+
+const ANTICLOCKWISE = false;
+const getWindingDirection = (vertices) => {
+	let sum = 0;
+	for (let i = 0; i < vertices.length; i++) {
+		const v1 = vertices[i];
+		const v2 = vertices[(i + 1) % vertices.length];
+		sum += (v2.x - v1.x) * (v2.y + v1.y);
+	}
+
+	return sum > 0;
+}
+
+const distance = (a, b) => {
+	const x = b.x - a.x;
+	const y = b.y - a.y;
+
+	return Math.sqrt(x * x + y * y);
 }
