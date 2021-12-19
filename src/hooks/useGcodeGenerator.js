@@ -6,32 +6,34 @@ import { getFaces } from '../libraries/ThreeGeometryHelpers';
 const useGcodeGenerator = () => {
 	const [gcode, setGcode] = useState('');
 	const [geometry, setGeometry] = useState();
+	const [settings, setSettings] = useState({
+		layerHeight: 2,
+		line: {
+			width: 2
+		},
+		walls: 2,
+		infill: {
+			type: 'linear',
+			rotation: Math.PI / 12,
+			density: .2,
+		}
+	});
 
 	useEffect(() => {
-		if(!geometry) return;
+		if (!geometry) return;
+		if (!settings.layerHeight) return;
 		const faces = getFaces(geometry);
 		const boundingBox = geometry.boundingBox;
-
 		const slices = getSlices(
 			{ boundingBox, faces },
-			{ layerHeight: 1 }
+			{ layerHeight: settings.layerHeight }
 		);
+		setGcode(generateGcode(slices, settings));
+
+	}, [geometry, settings]);
 
 
-		setGcode(generateGcode(slices, {
-			line: {
-				width: .6
-			},
-			walls: 2,
-			infill: {
-				type: 'linear',
-				rotation: Math.PI / 12,
-				density: .2,
-			}
-		}));
-	}, [geometry]);
-
-	return [gcode, setGcode, geometry, setGeometry];
+	return [gcode, setGcode, geometry, setGeometry, settings, setSettings];
 };
 
 export default useGcodeGenerator;

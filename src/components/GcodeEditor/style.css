@@ -1,4 +1,5 @@
 .GcodeEditor {
+	grid-area: editor;
 	height: 100%;
 	overflow-y: scroll;
 	padding: 1rem;

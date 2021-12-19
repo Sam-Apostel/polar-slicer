@@ -5,11 +5,19 @@ import {
 } from 'three';
 import GcodeEditor from './components/GcodeEditor';
 import GcodeViewer from './components/GcodeViewer';
+import PrintSettings from './components/PrintSettings';
 import useGcodeGenerator from './hooks/useGcodeGenerator';
 
 
 function App() {
-	const [gcode, setGcode, geometry, setGeometry] = useGcodeGenerator();
+	const [
+		gcode,
+		setGcode,
+		geometry,
+		setGeometry,
+		settings,
+		setSettings
+	] = useGcodeGenerator();
 
 	useEffect(() => {
 		if (!setGeometry) return;
@@ -22,6 +30,7 @@ function App() {
 		<div className="App">
 			<GcodeEditor gcode={gcode} onChange={setGcode} />
 			<GcodeViewer gcode={gcode} shell={geometry} />
+			<PrintSettings settings={settings} onChange={setSettings} />
 		</div>
 	);
 }

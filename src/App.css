@@ -3,8 +3,9 @@
 	height:100vh;
 	display: grid;
 	grid-template:
-        'editor' 'viewer'
-		/ 1fr 1fr;
+        'editor viewer' 5fr
+        'settings viewer' max-content
+		/ max-content 3fr;
 }
 .App > * {
 	height: 100%;
