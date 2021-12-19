@@ -15,10 +15,10 @@ const getSlice = (geometry, zHeight) => {
 	const faces = getFacesAtHeight(geometry.faces, zHeight);
 
 	const edges = [...new Set(faces.map((face) => getEdgeFromFace(face, zHeight)))];
-	const shape = getShapeFromEdges(edges);
+	const shapes = getShapesFromEdges(edges);
 	return {
 		z: zHeight,
-		shape
+		shapes
 	};
 }
 
@@ -76,14 +76,15 @@ const vertexAtHeightOnEdge = (edge, height) => {
 };
 
 /**
- * get shape from vertices
+ * recursively get shapes from vertices by matching their start- and endpoints
  */
-const getShapeFromEdges = edges => {
-	if (edges.length <= 1) return edges.flatMap(edge => edge);
+const getShapesFromEdges = edges => {
+	if (edges.length <= 1) return [edges.flatMap(edge => edge)];
 
 	let lastVertex = edges[0][1];
 	let shape = [lastVertex];
 	const usedEdges = [0];
+	let moreShapes = [];
 	for (let i = 0; i < edges.length - 1; i++) {
 		let direction = 1;
 		const nextEdge = edges.find(([start, end], i) => {
@@ -100,27 +101,22 @@ const getShapeFromEdges = edges => {
 			return false;
 		});
 		if (!nextEdge) {
-			continue; // TODO: start a new shape
+			moreShapes = getShapesFromEdges(edges.filter((_, index) => !usedEdges.includes(index)));
+			break;
 		}
 		lastVertex = nextEdge[direction];
 		shape.push(nextEdge[direction]);
 	}
 
 	// join edges that lie inline with another
-	shape = shape.filter((vertex, index, vertices) => {
-		const prev = vertices[(index - 1 + vertices.length) % vertices.length];
-		const next = vertices[(index + 1) % vertices.length];
-		return (distance(prev, vertex) + distance(vertex, next) !== distance(prev, next));
-	});
-
-
+	shape = getSimplifiesShape(shape)
 
 	// TODO: check if the shape has an even or odd amount of parents, this should determine the winding direction
 	if (getWindingDirection(shape) === ANTICLOCKWISE) {
 		shape.reverse();
 	}
 	shape.push(shape[0]);
-	return shape;
+	return [shape, ...moreShapes];
 
 }
 
@@ -141,4 +137,18 @@ const distance = (a, b) => {
 	const y = b.y - a.y;
 
 	return Math.sqrt(x * x + y * y);
+}
+
+/**
+ * removes points that lie inline with their previous and next point.
+ * assumes shape to be a circular list that can be shifted without any difference in the output.
+ * @param {Array<{x: number, y: number}>} shape 
+ * @returns {Array<{x: number, y: number}>}
+ */
+const getSimplifiesShape = shape => {
+	return shape.filter((vertex, index, vertices) => {
+		const prev = vertices[(index - 1 + vertices.length) % vertices.length];
+		const next = vertices[(index + 1) % vertices.length];
+		return (distance(prev, vertex) + distance(vertex, next) !== distance(prev, next));
+	});
 }

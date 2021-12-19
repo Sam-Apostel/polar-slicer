@@ -5,7 +5,7 @@ import { getFaces } from '../libraries/ThreeGeometryHelpers';
 
 const useGcodeGenerator = () => {
 	const [gcode, setGcode] = useState('');
-	const [geometry, setGeometry] = useState();
+	const [geometries, setGeometries] = useState();
 	const [settings, setSettings] = useState({
 		layerHeight: 2,
 		line: {
@@ -20,20 +20,20 @@ const useGcodeGenerator = () => {
 	});
 
 	useEffect(() => {
-		if (!geometry) return;
+		if (!geometries) return;
 		if (!settings.layerHeight) return;
-		const faces = getFaces(geometry);
-		const boundingBox = geometry.boundingBox;
+		const faces = geometries.map(geometry => getFaces(geometry));
+		const boundingBox = geometry[0].boundingBox;
 		const slices = getSlices(
 			{ boundingBox, faces },
 			{ layerHeight: settings.layerHeight }
 		);
 		setGcode(generateGcode(slices, settings));
 
-	}, [geometry, settings]);
+	}, [geometries, settings]);
 
 
-	return [gcode, setGcode, geometry, setGeometry, settings, setSettings];
+	return [gcode, setGcode, geometries, setGeometries, settings, setSettings];
 };
 
 export default useGcodeGenerator;
