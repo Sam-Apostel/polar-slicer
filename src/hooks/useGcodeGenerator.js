@@ -24,6 +24,7 @@ const useGcodeGenerator = () => {
 		if (!settings.layerHeight) return;
 		const faces = geometries.map(geometry => getFaces(geometry));
 		const boundingBox = geometries[0].boundingBox;
+		
 		const slices = getSlices(
 			{ boundingBox, faces },
 			{ layerHeight: settings.layerHeight }
