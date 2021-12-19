@@ -33,3 +33,5 @@ ex:
 
 ## limitations
 - each slice needs to be 1 continuous path
+- the ui colors are defined in the lch color space to train myself in it. lch is currently only supported in Safari
+- ui doesn't allow for changing settings, input geometry or present gcode
