@@ -8,6 +8,18 @@
 	counter-reset: section;
 	font-family: monospace;
 	line-height: 1.2rem;
+	scrollbar-color: dark;
+}
+
+.GcodeEditor::-webkit-scrollbar {
+	width: 1rem;
+	background-color: lch(25% 0 270 / 1);
+}
+
+/* Add a thumb */
+.GcodeEditor::-webkit-scrollbar-thumb {
+	background: lch(14% 0 270 / 1);
+	border-radius: .5rem;
 }
 
 .GcodeEditor .addLine {
@@ -99,3 +111,14 @@
 	white-space: pre-wrap;
 }
 
+.Gcode-G0 {
+	background-color: lch(35% 50 30);
+}
+
+.Gcode-G1 {
+	background-color: lch(55% 50 100);
+}
+
+.Gcode-G2, .Gcode-G3 {
+	background-color: lch(40% 50 240);
+}

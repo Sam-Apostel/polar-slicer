@@ -21,42 +21,32 @@ const Gcode = props => {
 	const [command, ...args] = code.split(' ');
 	const commandType = command.slice(0, 1);
 	const commandValue = command.slice(1);
-
+	let commandName = undefined;
 	if (commandType === 'G') {
-		if (commandValue === '1') {
-			return (
-				<div className={`Gcode Gcode-${commandType}-command`}>
-					<div className="block">
-						Move
-						{/* XYZEF */}
-					</div>
-					{args.length > 0 && args.map(arg => <GcodeArg key={arg}>{arg}</GcodeArg>)}
-				</div>
-			);
+		if (commandValue === '0') {
+			commandName = 'Rapid move';
+		} else if (commandValue === '1') {
+			commandName = 'Move';
+		} else if (commandValue === '2') {
+			commandName = 'Clockwise arc';
+		} else if (commandValue === '3') {
+			commandName = 'Counterclockwise arc';
 		}
 	} else if (commandType === 'M') {
 		if (commandValue === '204') {
-			return (
-				<div className={`Gcode Gcode-${commandType}-command`}>
-					<div className="block">
-						Acceleration
-						{/*
-					        P: printing
-					        T: travel
-					        R: retraction
-						 */}
-					</div>
-					{args.length > 0 && args.map(arg => <GcodeArg key={arg}>{arg}</GcodeArg>)}
-				</div>
-			);
+			commandName = 'Acceleration';
 		}
 	}
 
 	return (
-		<div className={`Gcode Gcode-${commandType}-command`}>
+		<div className={`Gcode Gcode-${commandType}-command Gcode-${command}`}>
 			<div className="block">
-				<span>{commandType}</span>
-				<span>{commandValue}</span>
+				{commandName ? (
+					<span>{commandName}</span>
+				) : [
+					<span>{commandType}</span>,
+					<span>{commandValue}</span>
+				]}
 			</div>
 			{args.length > 0 && args.map(arg => <GcodeArg key={arg}>{arg}</GcodeArg>)}
 		</div>
