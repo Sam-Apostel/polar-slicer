@@ -28,8 +28,8 @@ ex:
 - retraction `G1 X100 Y20 Z0.35 E-0.6`
 
 ## supported
-✔ THREE.js bufferGeometries (both index and not indexed) \
-✔ 1 wall thick slicing \
+- [x] THREE.js bufferGeometries as input geometry (both index and not indexed) \
+- [x] multiple wall slicing
 
 ## limitations
 - each slice needs to be 1 continuous path

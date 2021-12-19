@@ -33,7 +33,7 @@
 - [x] convert slices into gcode
 - [ ] infill patterns
   - [ ] dynamic infill density
-- [ ] multiple walls
+- [x] multiple walls
   - [ ] detect thin extrusions and space evenly / extrude thinner lines
 - [ ] support structures
 - [ ] align the start and stop points of consecutive loop

@@ -1,11 +1,17 @@
+import { getInsetPolygon } from './offsetPolygon';
+
 export const generateGcode = (slices, settings) => {
 
 	const gcodeCommands = slices.flatMap(({ z, shape }) => {
-		// inset by half line width
-		// inset by line width walls amount of times
-		// inset by line width - infill-wall overlap
-			// generate infill pattern
-		return pathToGcode(shape, z);
+		const offsetShapes = [...Array(settings.walls)].map((_, index) =>
+			getInsetPolygon(shape, (settings.line.width / 2) + (settings.line.width * index))
+		);
+		const roundedPaths = offsetShapes.map(shape => shape.map(({x,y,...shape}) => ({
+			x: Math.round(x * 100) / 100,
+			y: Math.round(y * 100) / 100,
+			...shape
+		})));
+		return roundedPaths.flatMap(offsetShape => pathToGcode(offsetShape, z));
 	});
 
 	return gcodeCommands.join(`
@@ -15,11 +21,12 @@ export const generateGcode = (slices, settings) => {
 let e=1;
 const pathToGcode = (path, z) => {
 	let fastMove = true;
-	const gcodeCommands = path.map(({ x, y }) => {
+	const gcodeCommands = path.map(({ x, y, r }) => {
 		if (fastMove) {
 			fastMove = false;
 			return `G0 X${x} Y${y} Z${z}`;
 		}
+		if (r) return `G2 X${x} Y${y} Z${z} R${r} E${e++}`;
 		return `G1 X${x} Y${y} Z${z} E${e++}`;
 	});
 
