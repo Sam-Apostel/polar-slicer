@@ -4,8 +4,7 @@
 export const getSlices = (geometry, settings) => {
 	const height = geometry.boundingBox.max.z;
 	const amountOfSlices = Math.ceil(height / settings.layerHeight);
-	const slices = [...Array(amountOfSlices)].map((_, layer) => getSlice(geometry, layer * settings.layerHeight));
-	return slices;
+	return [...Array(amountOfSlices)].map((_, layer) => getSlice(geometry, layer * settings.layerHeight));
 }
 
 /**
@@ -13,7 +12,6 @@ export const getSlices = (geometry, settings) => {
  */
 const getSlice = (geometry, zHeight) => {
 	const faces = getFacesAtHeight(geometry.faces, zHeight);
-
 	const edges = [...new Set(faces.map((face) => getEdgeFromFace(face, zHeight)))];
 	const shapes = getShapesFromEdges(edges);
 	return {
@@ -144,7 +142,7 @@ const distance = (a, b) => {
 /**
  * removes points that lie inline with their previous and next point.
  * assumes shape to be a circular list that can be shifted without any difference in the output.
- * @param {Array<{x: number, y: number}>} shape 
+ * @param {Array<{x: number, y: number}>} shape
  * @returns {Array<{x: number, y: number}>}
  */
 const getSimplifiesShape = shape => {
