@@ -85,21 +85,23 @@ const getShapesFromEdges = edges => {
 	let shape = [lastVertex];
 	const usedEdges = [0];
 	let moreShapes = [];
+	const isNextEdge = ([start, end], i) => {
+		if (usedEdges.includes(i)) return false;
+		if (lastVertex.x === start.x && lastVertex.y === start.y) {
+			usedEdges.push(i);
+			direction = 1;
+			return true;
+		}
+		if (lastVertex.x === end.x && lastVertex.y === end.y) {
+			usedEdges.push(i);
+			direction = 0;
+			return true;
+		}
+		return false;
+	};
+	let direction;
 	for (let i = 0; i < edges.length - 1; i++) {
-		let direction = 1;
-		const nextEdge = edges.find(([start, end], i) => {
-			if (usedEdges.includes(i)) return false;
-			if (lastVertex.x === start.x && lastVertex.y === start.y) {
-				usedEdges.push(i);
-				return true;
-			}
-			if (lastVertex.x === end.x && lastVertex.y === end.y) {
-				usedEdges.push(i);
-				direction = 0;
-				return true;
-			}
-			return false;
-		});
+		const nextEdge = edges.find(isNextEdge);
 		if (!nextEdge) {
 			moreShapes = getShapesFromEdges(edges.filter((_, index) => !usedEdges.includes(index)));
 			break;

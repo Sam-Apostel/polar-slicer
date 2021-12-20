@@ -1,4 +1,3 @@
-let i = 0;
 const CLOCKWISE = 'clockwise';
 const TOLERANCE = 0.000001;
 
@@ -37,7 +36,6 @@ export const getInsetPolygon = (polygon, distance) => {
 
 	// TODO: try to determine if edge should be skipped due to it being too short
 	// TODO: split into separate loops when the inset self intersects
-	i++;
 	return offsetShape;
 };
 

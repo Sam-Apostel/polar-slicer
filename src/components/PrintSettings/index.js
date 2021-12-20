@@ -1,7 +1,7 @@
 const PrintSettings = props => {
 	const {
 		settings,
-		setSettings
+		// setSettings
 	} = props;
 	return <pre style={{
 		gridArea: 'settings',
