@@ -22,7 +22,7 @@ const useGcodeGenerator = () => {
 	useEffect(() => {
 		if (!geometries) return;
 		if (!settings.layerHeight) return;
-		const faces = geometries.map(geometry => getFaces(geometry));
+		const faces = geometries.flatMap(geometry => getFaces(geometry));
 		const boundingBox = geometries[0].boundingBox;
 
 		const slices = getSlices(
