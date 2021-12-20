@@ -24,8 +24,10 @@ function App() {
 		const geom = new IcosahedronBufferGeometry(50);
 		const geomInside = new IcosahedronBufferGeometry(30);
 		geom.computeBoundingBox();
-		geom.translate(0, 0, -geom.boundingBox.min.z);
-		geomInside.translate(0, 0, -geom.boundingBox.min.z);
+		geomInside.computeBoundingBox();
+		const centerOffset = -geom.boundingBox.min.z - 1;
+		geom.translate(0, 0, centerOffset);
+		geomInside.translate(0, 0, centerOffset);
 
 		setGeometries([geom, geomInside]);
 	}, [setGeometries])
