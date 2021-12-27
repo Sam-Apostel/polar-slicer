@@ -19,7 +19,7 @@ const getSlice = (geometry, zHeight) => {
 		if (parity) return shape.reverse();
 		return { shape, parity };
 	}); 
-	shapes = shapes.map(({ shape, ...rest }) => ({ shape: [...shape, shape[0]], ...rest }));
+	shapes = shapes.map(({ shape, parity }) => ({ shape: [...shape, shape[0]], parity }));
 	return {
 		z: zHeight,
 		shapes
