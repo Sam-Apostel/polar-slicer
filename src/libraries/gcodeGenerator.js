@@ -9,7 +9,7 @@ export const generateGcode = (slices, settings) => {
 	const gcodeCommands = slices.flatMap(({ z, shapes }) => {
 		return shapes.flatMap(({ shape, parity }) => {
 			const offsetShapes = [...Array(settings.walls)].map((_, index) =>
-				getInsetPolygon(shape, (settings.line.width / 2) + (settings.line.width * index), Bool(parity))
+				getInsetPolygon(shape, (settings.line.width / 2) + (settings.line.width * index), Boolean(parity))
 			);
 			const roundedPaths = offsetShapes.map(shape => shape.map(({x,y,...shape}) => ({
 				x: Math.round(x * 100) / 100,
