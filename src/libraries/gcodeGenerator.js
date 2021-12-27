@@ -1,11 +1,15 @@
 import { getInsetPolygon } from './offsetPolygon';
 
+const CLOCKWISE = true;
+const ANTICLOCKWISE = false;
+
+
 export const generateGcode = (slices, settings) => {
 
 	const gcodeCommands = slices.flatMap(({ z, shapes }) => {
-		return shapes.flatMap(shape => {
+		return shapes.flatMap(({ shape, parity }) => {
 			const offsetShapes = [...Array(settings.walls)].map((_, index) =>
-				getInsetPolygon(shape, (settings.line.width / 2) + (settings.line.width * index))
+				getInsetPolygon(shape, (settings.line.width / 2) + (settings.line.width * index), Bool(parity))
 			);
 			const roundedPaths = offsetShapes.map(shape => shape.map(({x,y,...shape}) => ({
 				x: Math.round(x * 100) / 100,
@@ -23,12 +27,17 @@ export const generateGcode = (slices, settings) => {
 let e=1;
 const pathToGcode = (path, z) => {
 	let fastMove = true;
-	const gcodeCommands = path.map(({ x, y, r }) => {
+	const gcodeCommands = path.map(({ x, y, r, direction }) => {
 		if (fastMove) {
 			fastMove = false;
 			return `G0 X${x} Y${y} Z${z}`;
 		}
-		if (r) return `G2 X${x} Y${y} Z${z} R${r} E${e++}`;
+		if (r) {
+			if (direction === CLOCKWISE)
+				return `G2 X${x} Y${y} Z${z} R${r} E${e++}`;
+			if (direction === ANTICLOCKWISE)
+				return `G3 X${x} Y${y} Z${z} R${r} E${e++}`;
+		}
 		return `G1 X${x} Y${y} Z${z} E${e++}`;
 	});
 

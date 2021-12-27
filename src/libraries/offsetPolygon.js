@@ -1,7 +1,6 @@
-const CLOCKWISE = 'clockwise';
 const TOLERANCE = 0.000001;
 
-export const getInsetPolygon = (polygon, distance) => {
+export const getInsetPolygon = (polygon, distance, windingDirection) => {
 	const hasFirstAndLastVertexMatching = 1; // otherwise 0;
 	if (distance === 0) return polygon;
 	const edges = polygon.reduce((edges, vertex, index) => {
@@ -26,7 +25,7 @@ export const getInsetPolygon = (polygon, distance) => {
 				{
 					...nextEdge[0],
 					r: distance,
-					direction: CLOCKWISE,
+					direction: windingDirection,
 				}
 			];
 		}

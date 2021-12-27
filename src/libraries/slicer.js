@@ -17,9 +17,9 @@ const getSlice = (geometry, zHeight) => {
 	shapes = shapes.map((shape, index, shapes) => {
 		const parity = getNestedParity(shape, shapes);
 		if (parity) return shape.reverse();
-		return shape;
+		return { shape, parity };
 	}); 
-	shapes = shapes.map(shape => [...shape, shape[0]]);
+	shapes = shapes.map(({ shape, ...rest }) => ({ shape: [...shape, shape[0]], ...rest }));
 	return {
 		z: zHeight,
 		shapes
