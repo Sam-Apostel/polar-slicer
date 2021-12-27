@@ -137,7 +137,7 @@ const pointInPolygon = (p, s) => {
 	let k = 0;
 	let f = 0;
 	let u1 = 0; let u2 = 0;
-	let v2 = 0; let v2 = 0;
+	let v1 = 0; let v2 = 0;
 
 	for (let i = 0; i < s.length; i++) {
 		v1 = s[i][0].y - p.y; v2 = s[i][1].y - p.y;
