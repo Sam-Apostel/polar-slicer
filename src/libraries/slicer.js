@@ -13,7 +13,13 @@ export const getSlices = (geometry, settings) => {
 const getSlice = (geometry, zHeight) => {
 	const faces = getFacesAtHeight(geometry.faces, zHeight);
 	const edges = [...new Set(faces.map((face) => getEdgeFromFace(face, zHeight)))];
-	const shapes = getShapesFromEdges(edges);
+	let shapes = getShapesFromEdges(edges);
+	shapes = shapes.map((shape, index, shapes) => {
+		const parity = getNestedParity(shape, shapes);
+		if (parity) return shape.reverse();
+		return shape;
+	}); 
+	shapes = shapes.map(shape => [...shape, shape[0]]);
 	return {
 		z: zHeight,
 		shapes
@@ -111,14 +117,60 @@ const getShapesFromEdges = edges => {
 	// join edges that lie inline with another
 	shape = getSimplifiesShape(shape)
 
-	// TODO: check if the shape has an even or odd amount of parents, this should determine the winding direction
+	
 	if (getWindingDirection(shape) === ANTICLOCKWISE) {
 		shape.reverse();
 	}
-	shape.push(shape[0]);
 	return [shape, ...moreShapes];
-
 }
+
+/**
+ * point in polygon by https://mdpi-res.com/d_attachment/symmetry/symmetry-10-00477/article_deploy/symmetry-10-00477.pdf
+ * @param {x, y} p 
+ * @param [[{x,y}, {x, y}]] s 
+ * @returns 
+ * 1 within 
+ * 0 outside
+ * -1 on
+ */
+const pointInPolygon = (p, s) => {
+	let k = 0;
+	let f = 0;
+	let u1 = 0; let u2 = 0;
+	let v2 = 0; let v2 = 0;
+
+	for (let i = 0; i < s.length; i++) {
+		v1 = s[i][0].y - p.y; v2 = s[i][1].y - p.y;
+		if ((v1 < 0 && v2 < 0) || (v1 > 0 && v2 > 0)) continue;
+		
+		u1 = s[i][0].x - p.x; u2 = s[i][1].x - p.x;
+		f = u1 * v2 - u2 * v1;
+		
+		if (v2 > 0 && v1 <= 0) {
+			if (f > 0) k++;
+			else if (f === 0) return -1;
+		} else if (v1 > 0 && v2 <= 0) {
+			if (f < 0) k++;
+			else if (f === 0) return -1;
+		} else if ((v2 === 0 && v1 < 0) || (v2 === 0 && v1 < 0)) {
+			if (f === 0) return -1;
+		} else if (v1 === 0 && v2 === 0) {
+			if (u2 <= 0 && u1 >= 0) return -1;
+			else if (u1 <= 0 && u2 >= 0) return -1;
+		}
+	}
+	return k % 2;
+}
+
+
+const getNestedParity = (shape, otherShapes) => {
+	const parities = otherShapes.map(vertices => pointInPolygon(shape[0], vertices.map((vertex, index, vertices) => [vertex, vertices[(index + 1) % vertices.length]])));
+	const paritySum = parities.reduce((sum, parity) => {
+		if (parity === 1) return sum + 1;
+		return sum;
+	}, 0);
+	return paritySum % 2;
+};
 
 const ANTICLOCKWISE = false;
 const getWindingDirection = (vertices) => {
