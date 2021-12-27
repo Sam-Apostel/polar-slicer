@@ -79,9 +79,7 @@ const translate = (vertex, {x, y}) => {
 
 const getAdjacentEdgesIntersectionPoint = (a, b) => {
 	// we assume adjacent edges are not parallel, incident or perfectly in line
-	// they are either
-		// 1. not intersecting
-		// 2. intersecting
+	// we only check whether their lines' intersection lies on both of the edges
 
 	// quick reject
 	const boxA = getEdgeBox(a);
