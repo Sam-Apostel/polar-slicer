@@ -112,13 +112,13 @@
 }
 
 .Gcode-G0 {
-	background-color: lch(35% 50 30);
+	background-color: lch(35% 50 30 / .6);
 }
 
 .Gcode-G1 {
-	background-color: lch(55% 50 100);
+	background-color: lch(55% 50 100 / .6);
 }
 
 .Gcode-G2, .Gcode-G3 {
-	background-color: lch(40% 50 240);
+	background-color: lch(40% 50 240 / .6);
 }

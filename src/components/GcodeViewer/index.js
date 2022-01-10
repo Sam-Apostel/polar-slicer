@@ -9,7 +9,7 @@ import { useMeasure } from 'react-use';
 const GcodeViewer = props => {
 	const {
 		gcode,
-		shell
+		shells
 	} = props;
 	const [sizeRef, { width, height }] = useMeasure();
 	const canvasRef = useRef();
@@ -52,7 +52,8 @@ const GcodeViewer = props => {
 	}, []);
 
 	useEffect(() => {
-		if (!shell || !scene) return;
+		if (!shells || !scene) return;
+
 		if (scene.getObjectByName('shell')) return;
 
 		const material = new THREE.MeshPhongMaterial( {
@@ -61,13 +62,17 @@ const GcodeViewer = props => {
 			opacity: 0.2,
 		});
 		material.transparent = true;
-
-		const shellMesh = new THREE.Mesh( shell, material )
-		shellMesh.position.set(0, 0, 0);
-		shellMesh.quaternion.setFromEuler( new Euler( - Math.PI / 2, 0, 0 ) )
-		shellMesh.name = 'shell';
-		scene.add(shellMesh);
-	}, [shell, scene]);
+		shells.forEach((shell, index) => {
+			const name = `shell-${index}`;
+			if (scene.getObjectByName(name)) return;
+			
+			const shellMesh = new THREE.Mesh( shell, material )
+			shellMesh.position.set(0, 0, 0);
+			shellMesh.quaternion.setFromEuler( new Euler( - Math.PI / 2, 0, 0 ) )
+			shellMesh.name = name;
+			scene.add(shellMesh);
+		});
+	}, [shells, scene]);
 
 	useEffect(() => {
 

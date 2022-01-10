@@ -1,8 +1,6 @@
-let i = 0;
-const CLOCKWISE = 'clockwise';
 const TOLERANCE = 0.000001;
 
-export const getInsetPolygon = (polygon, distance) => {
+export const getInsetPolygon = (polygon, distance, windingDirection) => {
 	const hasFirstAndLastVertexMatching = 1; // otherwise 0;
 	if (distance === 0) return polygon;
 	const edges = polygon.reduce((edges, vertex, index) => {
@@ -27,7 +25,7 @@ export const getInsetPolygon = (polygon, distance) => {
 				{
 					...nextEdge[0],
 					r: distance,
-					direction: CLOCKWISE,
+					direction: windingDirection,
 				}
 			];
 		}
@@ -37,7 +35,6 @@ export const getInsetPolygon = (polygon, distance) => {
 
 	// TODO: try to determine if edge should be skipped due to it being too short
 	// TODO: split into separate loops when the inset self intersects
-	i++;
 	return offsetShape;
 };
 
@@ -81,9 +78,7 @@ const translate = (vertex, {x, y}) => {
 
 const getAdjacentEdgesIntersectionPoint = (a, b) => {
 	// we assume adjacent edges are not parallel, incident or perfectly in line
-	// they are either
-		// 1. not intersecting
-		// 2. intersecting
+	// we only check whether their lines' intersection lies on both of the edges
 
 	// quick reject
 	const boxA = getEdgeBox(a);

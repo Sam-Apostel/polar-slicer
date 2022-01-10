@@ -13,23 +13,28 @@ function App() {
 	const [
 		gcode,
 		setGcode,
-		geometry,
-		setGeometry,
+		geometries,
+		setGeometries,
 		settings,
 		setSettings
 	] = useGcodeGenerator();
 
 	useEffect(() => {
-		if (!setGeometry) return;
+		if (!setGeometries) return;
 		const geom = new IcosahedronBufferGeometry(50);
+		const geomInside = new IcosahedronBufferGeometry(30);
 		geom.computeBoundingBox();
-		geom.translate(0, 0, -geom.boundingBox.min.z);
-		setGeometry(geom)
-	}, [setGeometry])
+		geomInside.computeBoundingBox();
+		const centerOffset = -geom.boundingBox.min.z - 1;
+		geom.translate(0, 0, centerOffset);
+		geomInside.translate(0, 0, centerOffset);
+
+		setGeometries([geom, geomInside]);
+	}, [setGeometries])
 	return (
 		<div className="App">
 			<GcodeEditor gcode={gcode} onChange={setGcode} />
-			<GcodeViewer gcode={gcode} shell={geometry} />
+			<GcodeViewer gcode={gcode} shells={geometries} />
 			<PrintSettings settings={settings} onChange={setSettings} />
 		</div>
 	);
