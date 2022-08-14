@@ -1,4 +1,4 @@
-.GcodeEditor {
+.GCodeEditor {
 	grid-area: editor;
 	height: 100%;
 	overflow-y: scroll;
@@ -11,18 +11,18 @@
 	scrollbar-color: dark;
 }
 
-.GcodeEditor::-webkit-scrollbar {
+.GCodeEditor::-webkit-scrollbar {
 	width: 1rem;
 	background-color: lch(25% 0 270 / 1);
 }
 
 /* Add a thumb */
-.GcodeEditor::-webkit-scrollbar-thumb {
+.GCodeEditor::-webkit-scrollbar-thumb {
 	background: lch(14% 0 270 / 1);
 	border-radius: .5rem;
 }
 
-.GcodeEditor .addLine {
+.GCodeEditor .addLine {
 	display: inline-flex;
 	gap: .5rem;
 	padding: .2rem .8rem .2rem .2rem;
@@ -32,24 +32,24 @@
 	transition: .2s;
 	line-height: 1rem;
 }
-.GcodeEditor .addLine:hover {
+.GCodeEditor .addLine:hover {
 	background: lch(35% 50 270 / .3);
 }
-.GcodeEditor .addLine div{
+.GCodeEditor .addLine div{
 	background-color: lch(35% 50 270 / 1);
 	width: 1rem;
 	border-radius: 50%;
 	text-align: center;
 }
 
-.GcodeEditor .newLine {
+.GCodeEditor .newLine {
 	display: flex;
 	gap: .5rem;
 	margin-left: calc(4ch + 1rem);
 	padding: .15rem 0;
 }
 
-.GcodeEditor .newLine div{
+.GCodeEditor .newLine div{
 	color: lch(30% 0 0);
 	border: 1px solid currentColor;
 	width: 1.4rem;
@@ -57,11 +57,11 @@
 	text-align: center;
 	transition: .2s;
 }
-.GcodeEditor .newLine div:hover{
+.GCodeEditor .newLine div:hover{
 	color: lch(70% 0 0);
 }
 
-.GcodeEditor .newLine input{
+.GCodeEditor .newLine input{
 	appearance: none;
 	border: none;
 	background: lch(35% 50 270 / .3);
@@ -72,17 +72,17 @@
 	margin: 0;
 }
 
-.GcodeLine {
+.GCodeLine {
 	display: flex;
 	padding: .15rem 0;
 	min-height: 1.2rem;
 	gap: 1rem;
 }
-.GcodeLine.noCode {
+.GCodeLine.noCode {
 	text-indent: calc(4ch + 1rem);
 	padding: 0;
 }
-.GcodeLine:not(.noCode):before {
+.GCodeLine:not(.noCode):before {
 	counter-increment: section;
 	content: counter(section);
 	color: lch(30% 0 0);
@@ -90,35 +90,46 @@
 	width: 4ch;
 }
 
-.Gcode {
+.GCode {
 	display: flex;
 	gap: .6rem;
-	background-color: lch(30% 0 0);
+	--color: lch(30% 0 0);
+}
+.command {
+	background-color: var(--color);
 	padding: 0 .4rem;
 	border-radius: .2rem;
 }
 
-.Gcode-G-command {
-	background-color: lch(45% 50 30);
+.GCodeArg .type {
+	font-size: .5rem;
+	margin-right: .2rem
+}
+.GCodeArg .value {
+	font-size: .6rem;
 }
 
-.Gcode-M-command {
-	background-color: lch(45% 50 130);
+.GCode-G-command {
+	--color: lch(45% 50 30);
 }
 
-.GcodeLine .comment {
+.GCode-M-command {
+	--color: lch(45% 50 130);
+}
+
+.GCodeLine .comment {
 	color: lch(50% 0 0);
 	white-space: pre-wrap;
 }
 
-.Gcode-G0 {
-	background-color: lch(35% 50 30);
+.GCode-G0 {
+	--color: lch(35% 50 30);
 }
 
-.Gcode-G1 {
-	background-color: lch(55% 50 100);
+.GCode-G1 {
+	--color: lch(55% 50 100);
 }
 
-.Gcode-G2, .Gcode-G3 {
-	background-color: lch(40% 50 240);
+.GCode-G2, .GCode-G3 {
+	--color: lch(40% 50 240);
 }

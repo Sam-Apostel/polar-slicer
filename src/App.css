@@ -3,9 +3,14 @@
 	height:100vh;
 	display: grid;
 	grid-template:
-        'editor viewer' 5fr
-        'settings viewer' max-content
-		/ max-content 3fr;
+		'editor viewer' auto
+		'settings viewer' max-content
+		/ max-content auto;
+
+	--graph-template:
+		'viewer viewer' calc(100vh - 20rem)
+		'settings graph' 20rem
+		/ max-content auto;
 }
 .App > * {
 	height: 100%;
@@ -13,4 +18,8 @@
 
 * {
 	box-sizing: border-box;
+}
+
+.graph {
+	grid-area: graph;
 }

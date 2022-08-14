@@ -1,7 +1,7 @@
 import {
 	BufferGeometry,
 	Euler,
-	FileLoader,
+	// FileLoader,
 	Float32BufferAttribute,
 	Group,
 	LineBasicMaterial,
@@ -9,54 +9,57 @@ import {
 	Loader,
 	EllipseCurve
 } from 'three';
+import { Vertex } from '../types/geometry';
+
+type Args = { x?: number, y?: number, z?: number, e?: number, f?: number, r?: number };
 
 class GCodeLoader extends Loader {
 
-	constructor( manager ) {
+	// constructor( manager ) {
 
-		super( manager );
+		// super( manager );
 
-		this.splitLayer = false;
+		// this.splitLayer = false;
 
-	}
-
-	load( url, onLoad, onProgress, onError ) {
-
-		const scope = this;
-
-		const loader = new FileLoader( scope.manager );
-		loader.setPath( scope.path );
-		loader.setRequestHeader( scope.requestHeader );
-		loader.setWithCredentials( scope.withCredentials );
-		loader.load( url, function ( text ) {
-
-			try {
-
-				onLoad( scope.parse( text ) );
-
-			} catch ( e ) {
-
-				if ( onError ) {
-
-					onError( e );
-
-				} else {
-
-					console.error( e );
-
-				}
-
-				scope.manager.itemError( url );
-
-			}
-
-		}, onProgress, onError );
-
-	}
+	// }
+	//
+	// load( url, onLoad, onProgress, onError ) {
+	//
+	// 	const scope = this;
+	//
+	// 	const loader = new FileLoader( scope.manager );
+	// 	loader.setPath( scope.path );
+	// 	loader.setRequestHeader( scope.requestHeader );
+	// 	loader.setWithCredentials( scope.withCredentials );
+	// 	loader.load( url, function ( text ) {
+	//
+	// 		try {
+	//
+	// 			onLoad( scope.parse( text ) );
+	//
+	// 		} catch ( e ) {
+	//
+	// 			if ( onError ) {
+	//
+	// 				onError( e );
+	//
+	// 			} else {
+	//
+	// 				console.error( e );
+	//
+	// 			}
+	//
+	// 			scope.manager.itemError( url );
+	//
+	// 		}
+	//
+	// 	}, onProgress, onError );
+	//
+	// }
 
 	parse( data ) {
 
-		let state = { x: 0, y: 0, z: 0, e: 0, f: 0, extruding: false, relative: false };
+		let state: Args & { extruding?: boolean, relative?: boolean } = { x: 0, y: 0, z: 0, e: 0, f: 0, extruding: false, relative: false };
 		const layers = [];
 
 		let currentLayer = undefined;
@@ -113,7 +116,7 @@ class GCodeLoader extends Loader {
 				center.x, center.y,
 				radius, radius,
 				getAngle(p1, center), getAngle(p2, center),
-				direction
+				direction, 0
 			);
 			const divisions = 50;
 			curve.getPoints(divisions).map((point, index) => {
@@ -144,14 +147,15 @@ class GCodeLoader extends Loader {
 
 		}
 
-		const lines = data.replace( /;.+/g, '' ).split( '\n' );
+		const lines = data.replace( /;.+/g, '' ).split( '\n' ).filter(line => (line !== ''));
 
 		for ( let i = 0; i < lines.length; i ++ ) {
 
 			const tokens = lines[ i ].split( ' ' );
-			const cmd = tokens[ 0 ].toUpperCase();
+			const cmd = tokens[0].toUpperCase();
 
-			const args = {};
+
+			const args: Args = {};
 			tokens.splice( 1 ).forEach( function ( token ) {
 
 				if ( token[ 0 ] !== undefined ) {
@@ -186,14 +190,14 @@ class GCodeLoader extends Loader {
 					}
 
 				}
-				const getPolar = ({x, y, z}) => {
+				const getPolar = ({x, y, z}: Vertex) => {
 					return {
 						a: Math.atan2(y, x),
 						r: Math.sqrt(x * x + y * y),
 						z
 					};
 				}
-				const p1 = getPolar(state);
+				const p1 = getPolar(state as Vertex);
 				const p2 = getPolar(line);
 				// if (p1.r === 0) p1.a = p2.a; // get rotation from G68
 				if (p2.r === 0) p2.a = p1.a;
@@ -252,7 +256,7 @@ class GCodeLoader extends Loader {
 			} else if ( cmd === 'G2' || cmd === 'G3' ) {
 
 				// G2/G3 - circular Arc Movement ( G2 clock wise and G3 counter clock wise )
-				const line = {
+				const line: Args = {
 					x: args.x !== undefined ? absolute( state.x, args.x ) : state.x,
 					y: args.y !== undefined ? absolute( state.y, args.y ) : state.y,
 					z: args.z !== undefined ? absolute( state.z, args.z ) : state.z,
@@ -303,10 +307,10 @@ class GCodeLoader extends Loader {
 			} else if ( cmd === 'G92' ) {
 				//G92: Set Position
 				const line = state;
-				line.x = args.x !== undefined ? args.x : line.x;
-				line.y = args.y !== undefined ? args.y : line.y;
-				line.z = args.z !== undefined ? args.z : line.z;
-				line.e = args.e !== undefined ? args.e : line.e;
+				line.x = args.x ?? line.x;
+				line.y = args.y ?? line.y;
+				line.z = args.z ?? line.z;
+				line.e = args.e ?? line.e;
 				state = line;
 			} else {
 				console.warn( 'THREE.GCodeLoader: Command not supported:' + cmd );
@@ -322,16 +326,16 @@ class GCodeLoader extends Loader {
 		}
 
 		const object = new Group();
-		object.name = 'gcode';
+		object.name = 'gCode';
 
-		if ( this.splitLayer ) {
-			for ( let i = 0; i < layers.length; i ++ ) {
-				const layer = layers[ i ];
-				addObject( layer.vertex, extrudingMaterial, i );
-				addObject( layer.pathVertex, pathMaterial, i );
-				addObject( layer.arcVertex, arcMaterial, i );
-			}
-		} else {
+		// if ( this.splitLayer ) {
+		// 	for ( let i = 0; i < layers.length; i ++ ) {
+		// 		const layer = layers[ i ];
+		// 		addObject( layer.vertex, extrudingMaterial, i );
+		// 		addObject( layer.pathVertex, pathMaterial, i );
+		// 		addObject( layer.arcVertex, arcMaterial, i );
+		// 	}
+		// } else {
 
 			const vertex = [];
 			const pathVertex = [];
@@ -360,7 +364,7 @@ class GCodeLoader extends Loader {
 			addObject( pathVertex, pathMaterial, layers.length );
 			addObject( arcVertex, arcMaterial, layers.length );
 
-		}
+		// }
 
 		object.quaternion.setFromEuler( new Euler( - Math.PI / 2, 0, 0 ) );
 

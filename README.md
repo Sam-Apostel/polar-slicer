@@ -1,9 +1,9 @@
 # scripting based Bring Your Own Code slicer for polar printers
-Currently this repo only holds a barebones Gcode toolpath viewer for testing purposes.
+
 
 This project was created in function of a 3d motion platform that uses polar coordinates.
 
-## supported Gcode 
+## supported G-code
 
 ### G0 rapid move (implemented in polar coordinate system)
 ex:
@@ -34,4 +34,4 @@ ex:
 ## limitations
 - each slice needs to be 1 continuous path
 - the ui colors are defined in the lch color space to train myself in it. lch is currently only supported in Safari
-- ui doesn't allow for changing settings, input geometry or present gcode
+- ui doesn't allow for changing settings, input geometry or present G-code

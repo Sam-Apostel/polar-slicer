@@ -1,22 +1,21 @@
 import './style.css';
 import { useEffect, useState } from 'react';
+import React from 'react';
 
 
-const GcodeArg = props => {
+const GCodeArg = props => {
 	const { children: arg } = props;
 	const argType = arg.slice(0, 1);
 	const argValue = arg.slice(1);
 	return (
-		<div className={`GcodeArg GcodeArg-${argType}`}>
-			<div className="block">
-				<span>{argType}</span>
-				<span>{argValue}</span>
-			</div>
+		<div className={`GCodeArg GCodeArg-${argType}`}>
+			<span className="type">{argType}:</span>
+			<span className="value">{+(+argValue).toFixed(2)}</span>
 		</div>
 	);
 };
 
-const Gcode = props => {
+const GCode = props => {
 	const { children: code } = props;
 	const [command, ...args] = code.split(' ');
 	const commandType = command.slice(0, 1);
@@ -28,9 +27,9 @@ const Gcode = props => {
 		} else if (commandValue === '1') {
 			commandName = 'Move';
 		} else if (commandValue === '2') {
-			commandName = 'Clockwise arc';
+			commandName = 'CW arc';
 		} else if (commandValue === '3') {
-			commandName = 'Counterclockwise arc';
+			commandName = 'CCW arc';
 		}
 	} else if (commandType === 'M') {
 		if (commandValue === '204') {
@@ -39,8 +38,8 @@ const Gcode = props => {
 	}
 
 	return (
-		<div className={`Gcode Gcode-${commandType}-command Gcode-${command}`}>
-			<div className="block">
+		<div className={`GCode GCode-${commandType}-command GCode-${command}`}>
+			<div className="command">
 				{commandName ? (
 					<span>{commandName}</span>
 				) : [
@@ -48,33 +47,33 @@ const Gcode = props => {
 					<span>{commandValue}</span>
 				]}
 			</div>
-			{args.length > 0 && args.map(arg => <GcodeArg key={arg}>{arg}</GcodeArg>)}
+			{args.length > 0 && args.map(arg => <GCodeArg key={arg}>{arg}</GCodeArg>)}
 		</div>
 	);
 };
 
-const GcodeLine = props => {
+const GCodeLine = props => {
 	const { children: value } = props;
 	const [code, ...commentParts] = value.split(';');
 	const comment = commentParts.join(';').trim();
 	const hasCode = Boolean(code.replace(/\s/g, '').length);
 	return (
-		<div className={`GcodeLine ${hasCode ? '' : 'noCode'}`}>
-			{hasCode && <Gcode>{code.trim()}</Gcode>}
+		<div className={`GCodeLine ${hasCode ? '' : 'noCode'}`}>
+			{hasCode && <GCode>{code.trim()}</GCode>}
 			{comment !== '' && <div className="comment">{comment}</div>}
 		</div>
 	);
 };
 
-const GcodeEditor = props => {
+const GCodeEditor = props => {
 	const {
-		gcode,
+		gCode,
 		onChange
 	} = props;
 	const [newLine, setNewLine] = useState(null);
 	const [lineCopy, setLineCopy] = useState(null);
 
-	const lines = gcode.split('\n');
+	const lines = gCode.split('\n');
 
 	useEffect(() => {
 		if (lineCopy > 0 && lineCopy < lines.length) setNewLine(lines[lines.length - lineCopy]);
@@ -84,39 +83,42 @@ const GcodeEditor = props => {
 	}, [lineCopy, lines]);
 
 	return (
-		<div className="GcodeEditor">
+		<div className="GCodeEditor">
 			{lines.map((line, index) =>
-				<GcodeLine key={index}>{line}</GcodeLine>
+				<GCodeLine key={index}>{line}</GCodeLine>
 			)}
 			{!newLine && <div onClick={() => setNewLine('G1 ')} className="addLine"><div>+</div>add line</div>}
-			{newLine && <div className="newLine"><input
-				type="text"
-				value={newLine}
-				onChange={e => setNewLine(e.target.value)}
-				onKeyUp={e => {
-					switch (e.key) {
-						case 'Enter': {
-							onChange(`${gcode}
-${e.target.value}`);
-							setNewLine('G1 ');
-							setLineCopy(null);
-							break;
-						}
-						case 'ArrowUp': {
-							setLineCopy(lineCopy => lineCopy + 1)
-							break;
-						}
-						case 'ArrowDown': {
-							if (lineCopy !== 0)	setLineCopy(lineCopy => lineCopy - 1);
-							break;
-						}
-						default: break;
-					}
-				}}
-			/><div className="closeNewLine" onClick={() => setNewLine(null)}>×</div></div>}
-
+			{newLine && (
+				<div className="newLine">
+					<input
+						type="text"
+						value={newLine}
+						onChange={e => setNewLine(e.target.value)}
+						onKeyUp={(e) => {
+							switch (e.key) {
+								case 'Enter': {
+									onChange(`${gCode}\n${e.currentTarget.value}`);
+									setNewLine('G1 ');
+									setLineCopy(null);
+									break;
+								}
+								case 'ArrowUp': {
+									setLineCopy(lineCopy => lineCopy + 1)
+									break;
+								}
+								case 'ArrowDown': {
+									if (lineCopy !== 0)	setLineCopy(lineCopy => lineCopy - 1);
+									break;
+								}
+								default: break;
+							}
+						}}
+					/>
+					<div className="closeNewLine" onClick={() => setNewLine(null)}>×</div>
+				</div>
+			)}
 		</div>
 	);
 };
 
-export default GcodeEditor;
+export default GCodeEditor;

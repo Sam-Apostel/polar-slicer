@@ -1,5 +1,5 @@
-let i = 0;
 const CLOCKWISE = 'clockwise';
+// const ANTICLOCKWISE = 'anticlockwise';
 const TOLERANCE = 0.000001;
 
 export const getInsetPolygon = (polygon, distance) => {
@@ -37,7 +37,6 @@ export const getInsetPolygon = (polygon, distance) => {
 
 	// TODO: try to determine if edge should be skipped due to it being too short
 	// TODO: split into separate loops when the inset self intersects
-	i++;
 	return offsetShape;
 };
 
@@ -197,4 +196,5 @@ const getInvertedVector = ({x, y}) => {
 	return { x: -x, y: -y };
 }
 
-const zeroWithTolerance = (a) => (a < TOLERANCE && a > -TOLERANCE);
+export const zeroWithTolerance = (a, tolerance = TOLERANCE) => (a < tolerance && a > -tolerance);
+export const equalsWithTolerance = (a, b, tolerance = TOLERANCE) => Math.abs(a - b) < tolerance

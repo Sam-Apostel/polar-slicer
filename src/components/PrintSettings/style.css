@@ -1,0 +1,24 @@
+.Settings {
+	grid-area: settings;
+	margin: 0;
+	padding: 1rem;
+	background-color: lch(9% 0 270 / 1);
+	color: white;
+	border-top: 5px solid lch(20% 0 270 / 1);
+
+	display: flex;
+	flex-direction: column;
+}
+
+.Settings label {
+	display: flex;
+}
+
+.Settings label span {
+	flex-grow: 1;
+	flex-basis: 0;
+}
+.Settings label input, .Settings label select {
+	flex-grow: 1;
+	flex-basis: 0;
+}
